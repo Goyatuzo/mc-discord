@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 mcstatus = "*"
 "discord.py" = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
