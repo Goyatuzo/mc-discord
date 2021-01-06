@@ -1,0 +1,29 @@
+from os import path, environ, system
+from pathlib import Path
+
+# The usrename and passwords should be in the environment variables
+__username = environ['SMB_USERNAME']
+__pwd = environ['SMB_PASSWORD']
+__ip = environ['MC_SERVER_IP']
+
+# Mount on the home directory
+__home_dir = str(Path.home())
+__mounting_dir = path.join(__home_dir, 'MC_Discord_Bot')
+
+def setup() -> None:
+	"""Create the folder to mount the server files if it doesn't exist.
+	Then mount the SevTech files onto the computer."""
+	# The command to mount the server files into the file system.
+	cmd = f"mount -t smbfs //{__username}:{__pwd}@{__ip}/SevTech_3.1.7 {__mounting_dir}"
+
+	mounting_path = Path(__mounting_dir)
+	# Recursively create the folder if it does not already exist
+	if not mounting_path.exists():
+		mounting_path.mkdir(parents=True)
+
+	# Run the mounting command
+	system(cmd)
+
+def get_server_file(*args: str) -> str:
+	"""Grab path to file on the server corresponding to input args."""
+	return path.join(__mounting_dir, *args)
