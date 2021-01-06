@@ -7,6 +7,9 @@ name = "pypi"
 mcstatus = "*"
 "discord.py" = "*"
 python-dotenv = "*"
+wheel = "*"
+numpy = "==1.18.0"
+nbtlib = "*"
 
 [dev-packages]
 
