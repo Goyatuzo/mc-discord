@@ -4,12 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-mcstatus = "*"
 "discord.py" = "*"
 python-dotenv = "*"
-wheel = "*"
 numpy = "==1.18.0"
 nbtlib = "*"
+matplotlib = "*"
 
 [dev-packages]
 

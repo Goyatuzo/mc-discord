@@ -11,6 +11,7 @@ class Player:
 	def __init__(self, uuid, username):
 		self.__uuid = uuid
 		self.__username = username
+		
 
 	@property
 	def username(self) -> str:
