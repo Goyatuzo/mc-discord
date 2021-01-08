@@ -2,7 +2,6 @@ import discord
 from os import environ
 from dotenv import load_dotenv
 from pathlib import Path
-from mcstatus import MinecraftServer
 from operator import attrgetter
 
 from .servernet import setup
@@ -21,12 +20,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-	if message.content == '!players':
-		server = MinecraftServer(environ['MC_SERVER_IP'], 25565)
-		query = server.query()
-
-		await message.channel.send(f"Players Online: {', '.join(query.players.names)}")
-	elif message.content == '!killer':
+	if message.content == '!killer':
 		players = Player.get_all_players()
 		players_by_lethality = sorted(players, key=attrgetter('total_mob_kills'), reverse=True)
 
