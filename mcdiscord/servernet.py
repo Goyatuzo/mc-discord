@@ -14,7 +14,7 @@ def setup() -> None:
 	"""Create the folder to mount the server files if it doesn't exist.
 	Then mount the SevTech files onto the computer."""
 	# The command to mount the server files into the file system.
-	cmd = f"mount -t smbfs //{__username}:{__pwd}@{__ip}/SevTech_3.1.7 {__mounting_dir}"
+	cmd = f"sudo mount -t cifs //{__ip}/SevTech_3.1.7 {__mounting_dir} -o username={__username},password={__pwd}"
 
 	mounting_path = Path(__mounting_dir)
 	# Recursively create the folder if it does not already exist
