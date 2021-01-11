@@ -43,6 +43,8 @@ async def store_stats_in_database():
 						"date": parsed_date,
 						"data": loads(f)
 					}
+
+					# Store the most recent data into the dict
 					data_by_date[f"{parsed_date}{uniq_id}"] = user_data
 					
 				
