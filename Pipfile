@@ -8,6 +8,8 @@ name = "pypi"
 python-dotenv = "*"
 nbtlib = "*"
 matplotlib = "*"
+numpy = "==1.18.0"
+pymongo = {extras = ["srv"], version = "*"}
 
 [dev-packages]
 
