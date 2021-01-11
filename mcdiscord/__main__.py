@@ -17,7 +17,6 @@ client = discord.Client()
 async def on_ready():
 	setup()
 
-
 	print('Bot is ready')
 
 
