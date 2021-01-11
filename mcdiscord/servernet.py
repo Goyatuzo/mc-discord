@@ -1,4 +1,4 @@
-from os import path, environ, system
+from os import path, environ, system, listdir
 from sys import platform
 from pathlib import Path
 
@@ -26,7 +26,8 @@ def setup() -> None:
 		mounting_path.mkdir(parents=True)
 
 	# Run the mounting command
-	system(cmd)
+	if len(listdir(mounting_path)) == 0:
+            system(cmd)
 
 def get_server_file(*args: str) -> str:
 	"""Grab path to file on the server corresponding to input args."""
