@@ -10,6 +10,7 @@ nbtlib = "*"
 matplotlib = "*"
 numpy = "==1.18.0"
 pymongo = {extras = ["srv"], version = "*"}
+asyncio = "*"
 
 [dev-packages]
 
