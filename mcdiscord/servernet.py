@@ -1,4 +1,5 @@
 from os import path, environ, system
+from sys import platform
 from pathlib import Path
 
 # The usrename and passwords should be in the environment variables
@@ -14,7 +15,10 @@ def setup() -> None:
 	"""Create the folder to mount the server files if it doesn't exist.
 	Then mount the SevTech files onto the computer."""
 	# The command to mount the server files into the file system.
-	cmd = f"sudo mount -t cifs //{__ip}/SevTech_3.1.7 {__mounting_dir} -o username={__username},password={__pwd}"
+	if platform == "darwin":
+		cmd = f"mount -t smbfs //{__username}:{__pwd}@{__ip}/SevTech_3.1.7 {__mounting_dir}"
+	else:
+		cmd = f"sudo mount -t cifs //{__ip}/SevTech_3.1.7 {__mounting_dir} -o username={__username},password={__pwd}"
 
 	mounting_path = Path(__mounting_dir)
 	# Recursively create the folder if it does not already exist
