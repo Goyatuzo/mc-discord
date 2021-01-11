@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 from operator import attrgetter
 
+from .schedule import setup_schedule
 from .servernet import setup
 from .players import Player
 
@@ -16,7 +17,7 @@ client = discord.Client()
 @client.event
 async def on_ready():
 	setup()
-
+	setup_schedule()
 	print('Bot is ready')
 
 
