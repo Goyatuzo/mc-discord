@@ -8,11 +8,10 @@ name = "pypi"
 python-dotenv = "*"
 nbtlib = "*"
 matplotlib = "*"
-numpy = "==1.18.0"
 pymongo = {extras = ["srv"], version = "*"}
 asyncio = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.9"
+python_version = "3.8"
