@@ -3,32 +3,11 @@ from zipfile import ZipFile
 from os import listdir, path
 from json import loads
 from datetime import datetime
-from typing import List, Any
 
 from ..db import stats_collection 
 from ..servernet import get_server_file
 
 async def store_stats_in_database():
-	# Only run this once when the bot inits.
-	all_stats_cursor = stats_collection.find()
-
-	for stat_row in all_stats_cursor:
-		try:
-			converted = clean_stats_json(stat_row["data"])
-			converted["user_id"] = stat_row["user_id"]
-			converted["date"] = stat_row["date"]
-			mongo_key = {
-				"user_id": converted["user_id"],
-				"date": converted["date"]
-			}
-
-			stats_collection.replace_one(mongo_key, converted, upsert=True)
-		except:
-			# We don't care for rows that don't require conversion
-			pass
-
-
-
 	# Periodically call the same method by looping indefinitely
 	while True:
 		backups_folder = get_server_file("backups", "world")
