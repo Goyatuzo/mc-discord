@@ -1,5 +1,7 @@
 import discord 
 import matplotlib.pyplot as plt 
+import pandas as pd
+
 from os import environ
 from dotenv import load_dotenv
 from pathlib import Path
@@ -8,6 +10,8 @@ from operator import attrgetter
 from .schedule import setup_schedule
 from .servernet import setup
 from .players import Player
+
+from .db import stats_collection
 
 # The .env file should live in the parent directory
 load_dotenv(dotenv_path=Path('../'))
@@ -18,25 +22,43 @@ client = discord.Client()
 async def on_ready():
 	setup()
 	setup_schedule()
+
 	print('Bot is ready')
 
 
 @client.event
 async def on_message(message):
 	if message.content == '!killer':
-		players = Player.get_all_players()
-		players_by_lethality = sorted(players, key=attrgetter('total_mob_kills'), reverse=True)
-
-
-		for player in players_by_lethality:
-			plot = plt.bar([0], player.total_mob_kills)
-			plot.set_label(player.username[1:] if player.username.startswith("_") else player.username)
-
-
-		plt.legend()
-		plt.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom= False)
-		plt.savefig('killer.png')
 		plt.clf()
+
+		dat = pd.DataFrame(list(stats_collection.aggregate([{
+				"$lookup": {
+					"from": 'players',
+					"localField": 'user_id',
+					"foreignField": 'user_id',
+					"as": 'player'
+				}
+			}, 
+			{
+				"$project": {
+					"_id": 0,
+					"name": { "$arrayElemAt":  ["$player.name", 0] },
+					"date": 1,
+					"kills": "$stat.mobKills._stat"
+				}
+			}
+		])))
+
+		dat["name"] = dat["name"].map(lambda name: name.lstrip("_") if name.startswith("_") else name)
+
+
+		plt.figure()
+	#	dat.set_index('date')['kills'].plot()
+		dat.pivot(index="date", columns="name", values="kills").plot()
+		
+		plt.xlabel("Date")
+		plt.ylabel("Kills")
+		plt.savefig('killer.png')
 
 		await message.channel.send(file=discord.File('killer.png'))
 
