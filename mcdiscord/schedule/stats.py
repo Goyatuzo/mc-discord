@@ -27,7 +27,6 @@ async def store_stats_in_database():
 			parsed_date = datetime.strptime(raw_date, "%Y-%m-%d")
 
 			with ZipFile(path.join(backups_folder, fname), 'r') as zf:
-
 				# Could potentially break if some other stats folder comes into play.
 				stats_fnames = [f for f in zf.namelist() if f.startswith(f"stats{path.sep}") and f.endswith(".json")]
 
@@ -38,11 +37,10 @@ async def store_stats_in_database():
 
 					f = zf.read(stat_fname)
 
-					user_data = {
-						"user_id": uniq_id,
-						"date": parsed_date,
-						"data": loads(f)
-					}
+					# Process the loaded data
+					user_data = clean_stats_json(loads(f))
+					user_data["user_id"] = uniq_id
+					user_data["date"] = parsed_date
 
 					# Store the most recent data into the dict
 					data_by_date[f"{parsed_date}{uniq_id}"] = user_data
@@ -59,3 +57,24 @@ async def store_stats_in_database():
 
 		# Run this in 30 minutes time
 		await asyncio.sleep(1800)
+
+def clean_stats_json(loaded_json: dict) -> dict:
+	"""JSON loads makes each element in the stats file
+	into its own key, and doesn't recursively create
+	a dict. Fix that by doing exactly that."""
+	cleaned_json = {}
+
+	for key, value in loaded_json.items():
+		# We need the last element too because some stats
+		# hold accumulations of all its children.
+		path_list = key.split(".")
+
+		drill = cleaned_json
+		for stat_key in path_list:
+			drill = drill.setdefault(stat_key, {})
+
+		# To remove ambiguity and type checking, store the
+		# actual stat value in a unique key.
+		drill["_stat"] = value	
+
+	return cleaned_json
