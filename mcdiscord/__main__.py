@@ -7,14 +7,15 @@ from dotenv import load_dotenv
 from pathlib import Path
 from operator import attrgetter
 
+# Load environment variables
+load_dotenv(verbose=True)
+
 from .schedule import setup_schedule
 from .servernet import setup
 from .players import Player
 
 from .db import stats_collection
 
-# The .env file should live in the parent directory
-load_dotenv()
 
 client = discord.Client()
 
