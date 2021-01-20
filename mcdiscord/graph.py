@@ -11,7 +11,7 @@ def __generate_graph_and_name(project_value: str, y_axis_label: str, fname: str=
 
 	plt.clf()
 
-	print(f"Graphing: {project_value}")
+	print(f"Graphing: {y_axis_label}")
 	dat = pd.DataFrame(list(stats_collection.aggregate([{
 			"$lookup": {
 				"from": 'players',
@@ -47,7 +47,7 @@ def __generate_graph_and_name(project_value: str, y_axis_label: str, fname: str=
 	output_filename = f'{fname}.png'
 	plt.savefig(output_filename)
 
-	print(f"Graphing: {project_value} took {time() - start_time} seconds")
+	print(f"Graphing: {y_axis_label} took {time() - start_time} seconds")
 
 	return output_filename
 
