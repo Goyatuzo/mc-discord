@@ -55,17 +55,18 @@ def line_graph_single_stats(*stat_key: str, y_axis_label="") -> str:
 	return __generate_graph_and_name(f"$stat.{'.'.join(stat_key)}._stat", y_axis_label, y_axis_label)
 
 def line_graph_distance_traveled() -> str:
-	distance_stats = ["crouchOneCm",
-						"flyOneCm",
-						"diveOneCm",
-						"walkOneCm",
-						"runOneCm",
-						"fallOneCm",
-						"climbOneCm",
-						"boatOneCm",
-						"swimOneCm",
-						"horseOneCm"]
+	stats_cursor = stats_collection.find()
+
+	# Store all keys in unordered list to be uniqed via frozenset
+	distance_keys = []
+	for s in stats_cursor:
+		distance_keys += [stat for stat in s['stat'].keys() if stat.endswith("OneCm")]
+
+	uniq_distance_keys = frozenset(distance_keys)
+
+	# Convert the above list into Mongo fields to add
+	mongo_fields = [f"$stat.{field}._stat" for field in uniq_distance_keys]
 
 	return __generate_graph_and_name({
-		"$add": distance_stats
+		"$add": mongo_fields 
 	}, "Distance Traveled", "distance")
