@@ -14,7 +14,7 @@ from .players import Player
 from .db import stats_collection
 
 # The .env file should live in the parent directory
-load_dotenv(dotenv_path=Path('../'))
+load_dotenv()
 
 client = discord.Client()
 
