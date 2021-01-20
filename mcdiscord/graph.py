@@ -43,9 +43,12 @@ def __generate_graph_and_name(project_value: str, y_axis_label: str, fname: str=
 	plt.xlabel("Date")
 	plt.ylabel(y_axis_label)
 
+	# Move the legend outside of the graph
+	plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+
 	# Finally save output file to system so Discord.py can send it
 	output_filename = f'{fname}.png'
-	plt.savefig(output_filename)
+	plt.savefig(output_filename, bbox_inches='tight')
 
 	print(f"Graphing: {y_axis_label} took {time() - start_time} seconds")
 
