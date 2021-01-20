@@ -1,9 +1,15 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from time import time
+
 from .db import stats_collection
 
 def line_graph_stats(*stat_key: str, y_axis_label="") -> str:
+
+	# Start timing
+	start_time = time()
+
 	plt.clf()
 
 	dat = pd.DataFrame(list(stats_collection.aggregate([{
@@ -19,7 +25,7 @@ def line_graph_stats(*stat_key: str, y_axis_label="") -> str:
 				"_id": 0,
 				"name": { "$arrayElemAt":  ["$player.name", 0] },
 				"date": 1,
-				"kills": f"$stat.{'.'.join(stat_key)}._stat"
+				"value": f"$stat.{'.'.join(stat_key)}._stat"
 			}
 		}
 	])))
@@ -28,10 +34,12 @@ def line_graph_stats(*stat_key: str, y_axis_label="") -> str:
 
 
 	plt.figure()
-	dat.pivot(index="date", columns="name", values="kills").plot()
+	dat.pivot(index="date", columns="name", values="value").plot()
 	
 	plt.xlabel("Date")
 	plt.ylabel(y_axis_label)
 	plt.savefig('killer.png')
+
+	print(f"Graphing: {'.'.join(stat_key)} took {time() - start_time} seconds")
 
 	return "killer.png"
