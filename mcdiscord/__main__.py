@@ -21,7 +21,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-	if not message.author.bot:
+	if not message.author.bot and message.content.startswith("!"):
 		if message.content.startswith("!graph"):
 			_, graph_type = message.content.split()
 
