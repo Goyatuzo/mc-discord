@@ -18,15 +18,18 @@ async def on_ready():
 	setup()
 	setup_schedule()
 	print('Bot is ready')
+	print(client)
 
 
 @client.event
-async def on_message(message):
-	if not message.author.bot:
+async def on_message(message: discord.Message):
+	# If a message was send NOT from this bot
+	if message.author.id != client.user.id:
 		if message.content.startswith("!"):
 			if message.content.startswith("!graph"):
 				help_text = "Options are: killer, explorer, scrub, tank"
 				try:
+					# First content is always command, so irrelevant
 					_, graph_type = message.content.split()
 
 					if graph_type == 'killer':
@@ -43,14 +46,29 @@ async def on_message(message):
 						await message.channel.send(file=discord.File(image_file))
 					else:
 						await message.channel.send(help_text)
+				# Errors if user doesn't type in a graph type so capture and send help text
 				except:
 					await message.channel.send(help_text)
 
 			elif message.content.startswith("!karma"):
-				msg = karma_for_term(message.content.split()[1])
-				await message.channel.send(msg)
+				try:
+					msg = karma_for_term(message.content.split()[1])
+					await message.channel.send(msg)
+				except:
+					await message.channel.send("Usage: !karma <term>")
 			else:
-				await message.channel.send("Valid Commands: !graph")
+				await message.channel.send("Valid Commands: !graph, !karma")
+		# If a bot is sending the message, try some additional parsing
+		elif message.author.bot:
+			# MChat has format of user: message so remove user
+			_, content = message.content.split(": ")
+
+			if content.startswith("!karma"):
+				try:
+					msg = karma_for_term(content.split()[1])
+					await message.channel.send(msg)
+				except:
+					await message.channel.send("Usage: !karma <term>")
 		else:
 			karma_handler(message)
 
