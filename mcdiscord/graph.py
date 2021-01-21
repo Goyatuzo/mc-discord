@@ -49,7 +49,9 @@ def __generate_graph_and_name(project_value: str, y_axis_label: str, fname: str=
 	plt.savefig(output_filename, bbox_inches='tight')
 
 	print(f"Graphing: {y_axis_label} took {time() - start_time} seconds")
-	plt.close('all')
+
+	# Clear the figure but keep window open for performance
+	plt.clf()
 
 	return output_filename
 
