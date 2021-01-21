@@ -2,6 +2,12 @@ from discord import Message
 
 from .db import karma_collection
 
+def karma_for_term(term: str) -> str:
+	found = karma_collection.find_one({ "term": term })
+
+
+	return f"{term}: {found['plus'] - found['minus']}, {found['plus']}++, {found['minus']}--"
+
 def karma_handler(message: Message) -> None:
 	if message.content.endswith("++"):
 		__add_karma(message.content[:-2])

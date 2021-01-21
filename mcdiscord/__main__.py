@@ -9,7 +9,7 @@ load_dotenv(verbose=True)
 from .schedule import setup_schedule
 from .servernet import setup
 from .graph import line_graph_single_stats, line_graph_distance_traveled
-from .karma import karma_handler
+from .karma import karma_handler, karma_for_term
 
 client = discord.Client()
 
@@ -45,6 +45,10 @@ async def on_message(message):
 						await message.channel.send(help_text)
 				except:
 					await message.channel.send(help_text)
+
+			elif message.content.startswith("!karma"):
+				msg = karma_for_term(message.content.split()[1])
+				await message.channel.send(msg)
 			else:
 				await message.channel.send("Valid Commands: !graph")
 		else:
