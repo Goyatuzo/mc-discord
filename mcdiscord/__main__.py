@@ -38,7 +38,7 @@ async def on_message(message):
 				image_file = line_graph_single_stats("damageTaken", y_axis_label="Damage Taken")
 				await message.channel.send(file=discord.File(image_file))
 			else:
-				await message.channel.send("Options are: killer, explorer, scrub")
+				await message.channel.send("Options are: killer, explorer, scrub, tank")
 		else:
 			await message.channel.send("Valid Commands: !graph")
 
