@@ -4,9 +4,14 @@ from .db import karma_collection
 
 def karma_for_term(term: str) -> str:
 	try:
+		print(f"Karma request: {term}")
 		found = karma_collection.find_one({ "term": term })
-		return f"{term}: {found['plus'] - found['minus']}, {found['plus']}++, {found['minus']}--"
+		plus = found.get('plus', 0)
+		minus = found.get('minus', 0)
+
+		return f"{term}: {plus - minus}, {plus}++, {minus}--"
 	except Exception as ex:
+		print("Karma request errored")
 		return f"{term} was not found"
 
 def karma_handler(message: Message) -> None:
