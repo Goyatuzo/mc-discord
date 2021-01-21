@@ -9,8 +9,6 @@ def __generate_graph_and_name(project_value: str, y_axis_label: str, fname: str=
 	# Start timing
 	start_time = time()
 
-	plt.close('all')
-
 	print(f"Graphing: {y_axis_label}")
 	dat = pd.DataFrame(list(stats_collection.aggregate([{
 			"$lookup": {
@@ -51,6 +49,7 @@ def __generate_graph_and_name(project_value: str, y_axis_label: str, fname: str=
 	plt.savefig(output_filename, bbox_inches='tight')
 
 	print(f"Graphing: {y_axis_label} took {time() - start_time} seconds")
+	plt.close('all')
 
 	return output_filename
 
