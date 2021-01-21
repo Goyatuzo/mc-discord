@@ -3,10 +3,11 @@ from discord import Message
 from .db import karma_collection
 
 def karma_for_term(term: str) -> str:
-	found = karma_collection.find_one({ "term": term })
-
-
-	return f"{term}: {found['plus'] - found['minus']}, {found['plus']}++, {found['minus']}--"
+	try:
+		found = karma_collection.find_one({ "term": term })
+		return f"{term}: {found['plus'] - found['minus']}, {found['plus']}++, {found['minus']}--"
+	except Exception as ex:
+		return f"{term} was not found"
 
 def karma_handler(message: Message) -> None:
 	if message.content.endswith("++"):
