@@ -10,10 +10,15 @@ def karma_for_term(term: str) -> str:
 		return f"{term} was not found"
 
 def karma_handler(message: Message) -> None:
-	if message.content.endswith("++"):
-		__add_karma(message.content[:-2])
+	if message.author.bot:
+		_, msg = message.content.split(": ")
+	else:
+		msg = message.content
+
+	if msg.endswith("++"):
+		__add_karma(msg[:-2])
 	elif message.content.endswith("--"):
-		__remove_karma(message.content[:-2])
+		__remove_karma(msg[:-2])
 
 
 def __add_karma(text: str) -> None:

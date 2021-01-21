@@ -69,6 +69,8 @@ async def on_message(message: discord.Message):
 					await message.channel.send(msg)
 				except:
 					await message.channel.send("Usage: !karma <term>")
+			else:
+				karma_handler(message)
 		else:
 			karma_handler(message)
 
