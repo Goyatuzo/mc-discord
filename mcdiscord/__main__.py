@@ -16,18 +16,31 @@ client = discord.Client()
 async def on_ready():
 	setup()
 	setup_schedule()
-
 	print('Bot is ready')
 
 
 @client.event
 async def on_message(message):
-	if message.content == '!killer':
-		image_file = line_graph_single_stats("mobKills", y_axis_label="Kills")
-		await message.channel.send(file=discord.File(image_file))
-	elif message.content == "!explorer":
-		image_file = line_graph_distance_traveled()
-		await message.channel.send(file=discord.File(image_file))
+	if not message.author.bot:
+		if message.content.startswith("!graph"):
+			_, graph_type = message.content.split()
+
+			if graph_type == 'killer':
+				image_file = line_graph_single_stats("mobKills", y_axis_label="Kills")
+				await message.channel.send(file=discord.File(image_file))
+			elif graph_type == "explorer":
+				image_file = line_graph_distance_traveled()
+				await message.channel.send(file=discord.File(image_file))
+			elif graph_type == "scrub":
+				image_file = line_graph_single_stats("deaths", y_axis_label="Deaths")
+				await message.channel.send(file=discord.File(image_file))
+			elif graph_type == "tank":
+				image_file = line_graph_single_stats("damageTaken", y_axis_label="Damage Taken")
+				await message.channel.send(file=discord.File(image_file))
+			else:
+				await message.channel.send("Options are: killer, explorer, scrub")
+		else:
+			await message.channel.send("Valid Commands: !graph")
 
 
 client.run(environ['MCD_BOT_TOKEN'])
