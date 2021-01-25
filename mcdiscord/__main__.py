@@ -61,16 +61,19 @@ async def on_message(message: discord.Message):
 		# If a bot is sending the message, try some additional parsing
 		elif message.author.bot:
 			# MChat has format of user: message so remove user
-			_, content = message.content.split(": ")
+			try:
+				_, content = message.content.split(": ")
 
-			if content.startswith("!karma"):
-				try:
-					msg = karma_for_term(content.split()[1])
-					await message.channel.send(msg)
-				except:
-					await message.channel.send("Usage: !karma <term>")
-			else:
-				karma_handler(message)
+				if content.startswith("!karma"):
+					try:
+						msg = karma_for_term(content.split()[1])
+						await message.channel.send(msg)
+					except:
+						await message.channel.send("Usage: !karma <term>")
+				else:
+					karma_handler(message)
+			except Exception as ex:
+				print(ex)
 		else:
 			karma_handler(message)
 
