@@ -18,7 +18,6 @@ async def on_ready():
 	setup()
 	setup_schedule()
 	print('Bot is ready')
-	print(client)
 
 
 @client.event
