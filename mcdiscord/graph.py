@@ -28,6 +28,8 @@ def __generate_graph_and_name(project_value: str, y_axis_label: str, fname: str=
 		}
 	])))
 
+	print(dat.head())
+
 	# Usernames that start with underscore break matplotlib, string escape yielded mixed results
 	dat["name"] = dat["name"].map(lambda name: name.lstrip("_") if name.startswith("_") else name)
 
@@ -56,7 +58,7 @@ def __generate_graph_and_name(project_value: str, y_axis_label: str, fname: str=
 	return output_filename
 
 def line_graph_single_stats(*stat_key: str, y_axis_label="") -> str:
-	return __generate_graph_and_name(f"$stat.{'.'.join(stat_key)}._stat", y_axis_label, y_axis_label)
+	return __generate_graph_and_name({ "$ifNull": [ f"$stat.{'.'.join(stat_key)}._stat", 0 ]}, y_axis_label, y_axis_label)
 
 def line_graph_distance_traveled() -> str:
 	stats_cursor = stats_collection.find()
@@ -69,7 +71,7 @@ def line_graph_distance_traveled() -> str:
 	uniq_distance_keys = frozenset(distance_keys)
 
 	# Convert the above list into Mongo fields to add
-	mongo_fields = [f"$stat.{field}._stat" for field in uniq_distance_keys]
+	mongo_fields = [{'$ifNull': [ f"$stat.{field}._stat", 0 ]} for field in uniq_distance_keys]
 
 	return __generate_graph_and_name({
 		"$add": mongo_fields 
