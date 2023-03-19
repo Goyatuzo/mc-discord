@@ -7,6 +7,7 @@ name = "pypi"
 discord-py = "*"
 matplotlib = "*"
 pandas = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
