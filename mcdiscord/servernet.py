@@ -16,14 +16,16 @@ def setup() -> None:
 	Then mount the SevTech files onto the computer."""
 	# The command to mount the server files into the file system.
 	if platform == "darwin":
-		cmd = f"mount -t smbfs //{__username}:{__pwd}@{__ip}/SevTech_3.1.7 {__mounting_dir}"
+		cmd = f"mount -t smbfs //{__username}:{__pwd}@{__ip}/Yuto/Minecraft/backups/Valhelsia3 {__mounting_dir}"
 	else:
-		cmd = f"sudo mount -t cifs //{__ip}/SevTech_3.1.7 {__mounting_dir} -o username={__username},password={__pwd}"
+		cmd = f"sudo mount -t cifs //{__ip}/Yuto/Minecraft/backups/Valhelsia3 {__mounting_dir} -o user={__username},pass={__pwd}"
 
 	mounting_path = Path(__mounting_dir)
 	# Recursively create the folder if it does not already exist
 	if not mounting_path.exists():
 		mounting_path.mkdir(parents=True)
+
+	print(cmd)
 
 	# Run the mounting command
 	if len(listdir(mounting_path)) == 0:

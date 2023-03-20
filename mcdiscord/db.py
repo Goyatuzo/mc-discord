@@ -1,9 +1,6 @@
-from pymongo import MongoClient
-from os import environ 
+from sqlite3 import connect
 
-db_client = MongoClient(environ['MC_BOT_MONGODB'])
+db_client = connect('mcdiscord.db')
 
-db = db_client[environ['MC_BOT_DB_NAME']]
-
-stats_collection = db['player_stats']
-player_collection = db['players']
+#stats_collection = db['player_stats']
+#player_collection = db['players']
