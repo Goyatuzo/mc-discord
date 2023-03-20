@@ -25,10 +25,8 @@ async def on_ready():
 async def on_message(message: discord.Message):
 	# If a message was send NOT from this bot
 	if message.author.id != client.user.id:
-		print(message.content)
 		if message.content.startswith("!graph"):
 			help_text = "Options are: killer, explorer, scrub, tank"
-			print("OK")
 			try:
 				# First content is always command, so irrelevant
 				_, graph_type = message.content.split()
@@ -36,16 +34,13 @@ async def on_message(message: discord.Message):
 				print(graph_type)
 
 				if graph_type == 'killer':
-					image_file = line_graph_single_stats("mobKills", y_axis_label="Kills")
+					image_file = line_graph_single_stats("killed", y_axis_label="Kills")
 					await message.channel.send(file=discord.File(image_file))
 				elif graph_type == "explorer":
 					image_file = line_graph_distance_traveled()
 					await message.channel.send(file=discord.File(image_file))
 				elif graph_type == "scrub":
-					image_file = line_graph_single_stats("deaths", y_axis_label="Deaths")
-					await message.channel.send(file=discord.File(image_file))
-				elif graph_type == "tank":
-					image_file = line_graph_single_stats("damageTaken", y_axis_label="Damage Taken")
+					image_file = line_graph_single_stats("killed_by", y_axis_label="Deaths")
 					await message.channel.send(file=discord.File(image_file))
 				else:
 					await message.channel.send(help_text)
