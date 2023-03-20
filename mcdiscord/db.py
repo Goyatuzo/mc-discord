@@ -8,4 +8,3 @@ db = db_client[environ['MC_BOT_DB_NAME']]
 
 stats_collection = db['player_stats']
 player_collection = db['players']
-karma_collection = db['karma']
