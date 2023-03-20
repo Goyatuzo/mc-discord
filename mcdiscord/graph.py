@@ -10,6 +10,7 @@ def __generate_graph_and_name(project_value: str, y_axis_label: str, fname: str=
 	start_time = time()
 
 	print(f"Graphing: {y_axis_label}")
+
 	dat = pd.DataFrame(list(stats_collection.aggregate([{
 			"$lookup": {
 				"from": 'players',
@@ -23,7 +24,29 @@ def __generate_graph_and_name(project_value: str, y_axis_label: str, fname: str=
 				"_id": 0,
 				"name": { "$arrayElemAt":  ["$player.name", 0] },
 				"date": 1,
-				"value": project_value
+				"value": { "$objectToArray": project_value }
+			}
+		},
+		{
+			"$unwind": {
+				"path": "$value"
+			}
+		},
+		{
+			"$group": {
+				"_id": {
+					"name": "$name",
+					"date": "$date"
+				},
+				"value": { "$sum": "$value.v" }
+			}
+		},
+		{
+			"$project": {
+				"_id": 0,
+				"name": "$_id.name",
+				"date": "$_id.date",
+				"value": "$value"
 			}
 		}
 	])))
@@ -58,7 +81,7 @@ def __generate_graph_and_name(project_value: str, y_axis_label: str, fname: str=
 	return output_filename
 
 def line_graph_single_stats(*stat_key: str, y_axis_label="") -> str:
-	return __generate_graph_and_name({ "$ifNull": [ f"$stat.{'.'.join(stat_key)}._stat", 0 ]}, y_axis_label, y_axis_label)
+	return __generate_graph_and_name({ "$ifNull": [ f"$stats._stat.minecraft:{'.'.join(stat_key)}", { "value": 0 }]}, y_axis_label, y_axis_label)
 
 def line_graph_distance_traveled() -> str:
 	stats_cursor = stats_collection.find()
