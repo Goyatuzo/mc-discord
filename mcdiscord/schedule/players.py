@@ -14,12 +14,10 @@ async def store_players_in_database():
 
 			for user in users:
 				print(f"Updating {user['name']} in DB")
-				to_insert = {
-					"user_id": user["uuid"],
-					"name": user["name"]
-				}
+				uuid = user["uuid"]
+				name = user["name"]
 
-				player_collection.update(to_insert, to_insert, upsert=True)
+				player_collection.update_one({ "user_id": uuid }, { "$set": { "user_id": uuid, "name": name } }, upsert=True)
 
 
 		# Run this in 30 minutes time

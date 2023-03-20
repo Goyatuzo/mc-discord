@@ -6,6 +6,7 @@ from pathlib import Path
 __username = environ['SMB_USERNAME']
 __pwd = environ['SMB_PASSWORD']
 __ip = environ['MC_SERVER_IP']
+__backup_path = environ['BACKUP_PATH']
 
 # Mount on the home directory
 __home_dir = str(Path.home())
@@ -16,9 +17,9 @@ def setup() -> None:
 	Then mount the SevTech files onto the computer."""
 	# The command to mount the server files into the file system.
 	if platform == "darwin":
-		cmd = f"mount -t smbfs //{__username}:{__pwd}@{__ip}/SevTech_3.1.7 {__mounting_dir}"
+		cmd = f"mount -t smbfs //{__username}:{__pwd}@{__ip}/{__backup_path} {__mounting_dir}"
 	else:
-		cmd = f"sudo mount -t cifs //{__ip}/SevTech_3.1.7 {__mounting_dir} -o username={__username},password={__pwd}"
+		cmd = f"sudo mount -t cifs //{__ip}/{__backup_path} {__mounting_dir} -o username={__username},password={__pwd}"
 
 	mounting_path = Path(__mounting_dir)
 	# Recursively create the folder if it does not already exist

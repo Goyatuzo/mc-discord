@@ -10,7 +10,7 @@ from ..servernet import get_server_file
 async def store_stats_in_database():
 	# Periodically call the same method by looping indefinitely
 	while True:
-		backups_folder = get_server_file("backups", "world")
+		backups_folder = get_server_file()
 
 		all_zips = [f for f in listdir(backups_folder) if f.endswith('.zip')]
 		all_zips = sorted(all_zips)
@@ -23,12 +23,12 @@ async def store_stats_in_database():
 			# The date to associate this particular data point with
 			# The file is of the format Backup--world--DATE
 			# So just ignore irrelevant strings including zip extension
-			raw_date = fname[len('Backup--world--'):-11]
-			parsed_date = datetime.strptime(raw_date, "%Y-%m-%d")
+			raw_date = fname[:-4]
+			parsed_date = datetime.strptime(raw_date, "%Y-%m-%d-%H-%M-%S")
 
 			with ZipFile(path.join(backups_folder, fname), 'r') as zf:
 				# Could potentially break if some other stats folder comes into play.
-				stats_fnames = [f for f in zf.namelist() if f.startswith(f"stats{path.sep}") and f.endswith(".json")]
+				stats_fnames = [f for f in zf.namelist() if f.startswith(f"world{path.sep}stats{path.sep}") and f.endswith(".json")]
 
 				for stat_fname in stats_fnames:
 					# Get the UUID of the user by parsing file name
