@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from os import environ 
+from urllib import parse
 
 db_client = MongoClient(environ['MC_BOT_MONGODB'])
 

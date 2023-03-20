@@ -11,7 +11,7 @@ from .servernet import setup
 from .graph import line_graph_single_stats, line_graph_distance_traveled
 from .karma import karma_handler, karma_for_term
 
-client = discord.Client()
+client = discord.Client(intents=discord.Intents.default())
 
 @client.event
 async def on_ready():

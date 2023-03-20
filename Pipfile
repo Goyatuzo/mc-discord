@@ -8,6 +8,8 @@ discord-py = "*"
 matplotlib = "*"
 pandas = "*"
 python-dotenv = "*"
+pymongo = "*"
+asyncio = "*"
 
 [dev-packages]
 
