@@ -8,7 +8,7 @@ from discord.ext import tasks
 load_dotenv(verbose=True)
 
 from .graph import line_graph_single_stats, line_graph_distance_traveled
-from .schedule.player_sync import player_sync 
+from .schedule import player_sync 
 from .servernet import setup
 
 
