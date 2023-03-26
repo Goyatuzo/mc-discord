@@ -1,38 +1,28 @@
 import asyncio
-from json import loads
-from sqlite3 import Connection
-
 from ..servernet import get_server_file
+from ..db import conn
+from json import loads
 
-async def store_players_in_database(connection: Connection):
-	print("Obtained cursor")
-	cursor = connection.cursor()
-	
-	print("Created Players DB")
-	cursor.execute("CREATE TABLE IF NOT EXISTS Players (id VARCHAR(36), name VARCHAR(255));")
+async def store_players_in_database():
+	cursor = conn.cursor()
+	try:
+		# Periodically call the same method by looping indefinitely
+		while True:
+			print("Preparing to update users...")
 
-	# Periodically call the same method by looping indefinitely
-	while True:
-		fpath = get_server_file("usercache.json")
+			fpath = get_server_file("usercache.json")
 
-		users_to_process = []
-		with open(fpath) as f:
-			users = loads(f.read())
+			with open(fpath) as f:
+				users = loads(f.read())
+				
+				cleaned_users = [(user["uuid"], user["name"]) for user in users]
 
-			for user in users:
-				print(f"Updating id: {user['uuid']}, name: {user['name']} in DB")
-				to_process = (
-					user["uuid"],
-					user["name"]
-				)
+				cursor.executemany("INSERT OR REPLACE INTO Players(uuid, name) VALUES (?, ?)", cleaned_users)
+				conn.commit()
 
-				users_to_process.push(to_process)
+				print(f"Updated {len(cleaned_users)} users")
 
-		print(f"Processing {len(users_to_process)} ids to usernames")
-
-		cursor.execute("INSERT OR REPLACE INTO Players (id, name) VALUES (?, ?)", users_to_process)
-
-
-
-		# Run this in 30 minutes time
-		await asyncio.sleep(1800)
+			# Run this in 10 minutes time
+			await asyncio.sleep(600)
+	except Exception as e:
+		print(e)

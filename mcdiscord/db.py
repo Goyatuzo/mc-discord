@@ -1,6 +1,5 @@
-from sqlite3 import connect
+import sqlite3
+from .servernet import mounting_dir
+from os import path
 
-db_client = connect('mcdiscord.db')
-
-#stats_collection = db['player_stats']
-#player_collection = db['players']
+conn = sqlite3.connect(path.join(mounting_dir, "data", "instance.db"))
