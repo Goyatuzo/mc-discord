@@ -1,10 +1,5 @@
-from pymongo import MongoClient
-from os import environ 
-from urllib import parse
+import sqlite3
+from .servernet import mounting_dir
+from os import path
 
-db_client = MongoClient(environ['MC_BOT_MONGODB'])
-
-db = db_client[environ['MC_BOT_DB_NAME']]
-
-stats_collection = db['player_stats']
-player_collection = db['players']
+conn = sqlite3.connect(path.join(mounting_dir, "data", "instance.db"))

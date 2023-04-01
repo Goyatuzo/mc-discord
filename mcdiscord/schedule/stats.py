@@ -1,25 +1,27 @@
 import asyncio
+import uuid 
 from zipfile import ZipFile
 from os import listdir, path
-from json import loads
+from json import loads, dumps
 from datetime import datetime
 
-from ..db import stats_collection 
+from ..db import conn
 from ..servernet import get_server_file
 
 async def store_stats_in_database():
-	# Periodically call the same method by looping indefinitely
-	while True:
-		backups_folder = get_server_file()
+	cursor = conn.cursor()
+	print("Preparing to update player stats...")
+	backups_folder = get_server_file()
 
-		all_zips = [f for f in listdir(backups_folder) if f.endswith('.zip')]
-		all_zips = sorted(all_zips)
-		
-		# Store the final data to be stored in DB
-		data_by_date: dict = {}
-		for fname in all_zips:
-			# Grab fnames that have actual backup data
-			print(f"Processing {fname} for stats")
+	all_zips = [f for f in listdir(backups_folder) if f.endswith('.zip')]
+	all_zips = sorted(all_zips)
+	
+	# Store the final data to be stored in DB
+	data_by_date: dict = {}
+	for fname in all_zips:
+		# Grab fnames that have actual backup data
+		print(f"Processing {fname} for stats")
+		try:
 			# The date to associate this particular data point with
 			# The file is of the format Backup--world--DATE
 			# So just ignore irrelevant strings including zip extension
@@ -27,6 +29,7 @@ async def store_stats_in_database():
 			parsed_date = datetime.strptime(raw_date, "%Y-%m-%d-%H-%M-%S")
 
 			with ZipFile(path.join(backups_folder, fname), 'r') as zf:
+				user_datas = []
 				# Could potentially break if some other stats folder comes into play.
 				stats_fnames = [f for f in zf.namelist() if f.startswith(f"world{path.sep}stats{path.sep}") and f.endswith(".json")]
 
@@ -36,28 +39,19 @@ async def store_stats_in_database():
 					uniq_id = stat_fname.split(path.sep)[-1][:-5]
 
 					f = zf.read(stat_fname)
+					user_data = clean_stats_json(loads(f))
 
 					# Process the loaded data
-					user_data = clean_stats_json(loads(f))
-					user_data["user_id"] = uniq_id
-					user_data["date"] = parsed_date
+					parsed_data = (str(uuid.uuid4()), parsed_date.strftime('%Y-%m-%dT%H:%M:%S.000Z'), uniq_id, dumps(user_data['DataVersion']), dumps(user_data["stats"]))
+					user_datas.append(parsed_data)
 
-					# Store the most recent data into the dict
-					data_by_date[f"{parsed_date}{uniq_id}"] = user_data
-					
-				
-		for v in data_by_date.values():
-			mongo_key = {
-				"user_id": v["user_id"],
-				"date": v["date"]
-			}
+				cursor.executemany("INSERT OR IGNORE INTO PlayerStats (id, date, userId, dataVersion, stats) VALUES (?, ?, ?, ?, ?)", user_datas)
+		except Exception as e:
+			print(e)
 
-			print(f"Adding {v['user_id']} stats at {v['date']}")
-			stats_collection.replace_one(mongo_key, v, upsert=True)
-
-		# Run this in 30 minutes time
-		await asyncio.sleep(1800)
-
+	conn.commit()
+	print("Done updating player stats")
+									
 def clean_stats_json(loaded_json: dict) -> dict:
 	"""JSON loads makes each element in the stats file
 	into its own key, and doesn't recursively create
