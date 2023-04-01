@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from time import time
+from datetime import datetime
 
 from .db import conn
 
@@ -15,9 +16,10 @@ def __generate_graph_and_name(project_value: str, y_axis_label: str, fname: str=
 	print(f"Graphing: {y_axis_label}")
 
 	query = f"SELECT a.name, a.date, SUM(j.value) value FROM (PlayerStats t INNER JOIN Players p ON p.uuid = t.userId) a, json_each(json_extract(stats, '$._stat.{project_value}')) j GROUP BY a.userId, a.date"
+	print(query)
 	qu = cursor.execute(query)
 
-	dat = pd.DataFrame(qu.fetchall())
+	dat = pd.DataFrame([{ "name": res[0], "date": datetime.strptime(res[1], '%Y-%m-%dT%H:%M:%S.000Z'), "value": res[2]} for res in qu.fetchall()])
 
 	print(dat.head())
 
