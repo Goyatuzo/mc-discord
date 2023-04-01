@@ -18,20 +18,9 @@ intents.message_content = True
 client = discord.Client(intents=intents)
 
 class McClient(discord.Client):
-	def __init__(self, *args, **kwargs):
-		super().__init__(*args, **kwargs)
-
 	async def setup_hook(self) -> None:
-		self.player_sync.start()
-		self.player_stats_sync.start()
-
-	@tasks.loop(minutes=10)
-	async def player_sync(self):
-		players.store_players_in_database()
-
-	@tasks.loop(minutes=10)
-	async def player_stats_sync(self):
-		stats.store_stats_in_database()
+		player_sync.start()
+		player_stats_sync.start()
 
 
 	async def on_ready(self):
@@ -64,6 +53,16 @@ class McClient(discord.Client):
 					print(e)
 					await message.channel.send(help_text)
 					await message.channel.send("Valid Commands: !graph")
+
+
+@tasks.loop(minutes=10)
+async def player_sync():
+	await players.store_players_in_database()
+
+@tasks.loop(minutes=10)
+async def player_stats_sync():
+	await stats.store_stats_in_database()
+
 
 intents = discord.Intents.default()
 intents.message_content = True
