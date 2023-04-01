@@ -4,25 +4,20 @@ from ..db import conn
 from json import loads
 
 async def store_players_in_database():
-	cursor = conn.cursor()
 	try:
-		# Periodically call the same method by looping indefinitely
-		while True:
-			print("Preparing to update users...")
+		cursor = conn.cursor()
+		print("Preparing to update users...")
 
-			fpath = get_server_file("usercache.json")
+		fpath = get_server_file("usercache.json")
 
-			with open(fpath) as f:
-				users = loads(f.read())
-				
-				cleaned_users = [(user["uuid"], user["name"]) for user in users]
+		with open(fpath) as f:
+			users = loads(f.read())
+			
+			cleaned_users = [(user["uuid"], user["name"]) for user in users]
 
-				cursor.executemany("INSERT OR REPLACE INTO Players(uuid, name) VALUES (?, ?)", cleaned_users)
-				conn.commit()
+			cursor.executemany("INSERT OR REPLACE INTO Players(uuid, name) VALUES (?, ?)", cleaned_users)
+			conn.commit()
 
-				print(f"Updated {len(cleaned_users)} users")
-
-			# Run this in 10 minutes time
-			await asyncio.sleep(600)
+			print(f"Updated {len(cleaned_users)} users")
 	except Exception as e:
 		print(e)
