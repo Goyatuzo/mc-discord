@@ -1,5 +1,8 @@
 import discord 
 
+from .servernet import setup
+setup()
+
 from os import environ
 from dotenv import load_dotenv
 from discord.ext import tasks
@@ -10,12 +13,6 @@ load_dotenv(verbose=True)
 from .graph import line_graph_single_stats, line_graph_distance_traveled
 from .schedule import players
 from .schedule import stats
-from .servernet import setup
-
-
-intents = discord.Intents.default()
-intents.message_content = True
-client = discord.Client(intents=intents)
 
 class McClient(discord.Client):
 	async def setup_hook(self) -> None:
@@ -68,5 +65,4 @@ intents = discord.Intents.default()
 intents.message_content = True
 client = McClient(intents=intents)
 
-setup()
 client.run(environ['MCD_BOT_TOKEN'])
