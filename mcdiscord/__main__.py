@@ -35,13 +35,13 @@ class McClient(discord.Client):
 					print(graph_type)
 
 					if graph_type == 'killer':
-						image_file = line_graph_single_stats("stat.mobKills", y_axis_label="Kills")
+						image_file = line_graph_single_stats("\"stat.mobKills\"", y_axis_label="Kills")
 						await message.channel.send(file=discord.File(image_file))
 					# elif graph_type == "explorer":
 					# 	image_file = line_graph_distance_traveled()
 					# 	await message.channel.send(file=discord.File(image_file))
 					elif graph_type == "scrub":
-						image_file = line_graph_single_stats("stat.deaths", y_axis_label="Deaths")
+						image_file = line_graph_single_stats("\"stat.deaths\"", y_axis_label="Deaths")
 						await message.channel.send(file=discord.File(image_file))
 					else:
 						await message.channel.send(help_text)
