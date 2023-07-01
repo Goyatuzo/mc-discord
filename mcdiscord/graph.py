@@ -13,7 +13,7 @@ def __generate_graph_and_name(project_value: str, y_axis_label: str, fname: str=
 	start_time = time()
 	print(f"Graphing: {y_axis_label}")
 
-	query = f"SELECT a.name, a.date, SUM(j.value) value FROM (PlayerStats t INNER JOIN Players p ON p.uuid = t.userId) a, json_each(json_extract(stats, '$._stat.{project_value}')) j GROUP BY a.userId, a.date"
+	query = f"SELECT a.name, a.date, SUM(j.value) value FROM (PlayerStats t INNER JOIN Players p ON p.uuid = t.userId) a, json_each(json_extract(stats, '${project_value}')) j GROUP BY a.userId, a.date"
 
 	# dat = pd.DataFrame([{ "name": res[0], "date": datetime.strptime(res[1], '%Y-%m-%dT%H:%M:%S.000Z'), "value": res[2]} for res in qu.fetchall()])
 	dat = pd.read_sql_query(query, conn)

@@ -39,10 +39,9 @@ async def store_stats_in_database():
 					uniq_id = stat_fname.split(path.sep)[-1][:-5]
 
 					f = zf.read(stat_fname)
-					user_data = clean_stats_json(loads(f))
-
+					
 					# Process the loaded data
-					parsed_data = (str(uuid.uuid4()), parsed_date.strftime('%Y-%m-%dT%H:%M:%S.000Z'), uniq_id, dumps(user_data["stats"]))
+					parsed_data = (str(uuid.uuid4()), parsed_date.strftime('%Y-%m-%dT%H:%M:%S.000Z'), uniq_id, f)
 					user_datas.append(parsed_data)
 
 				cursor.executemany("INSERT OR IGNORE INTO PlayerStats (id, date, userId, stats) VALUES (?, ?, ?, ?)", user_datas)
