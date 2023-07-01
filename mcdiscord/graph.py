@@ -23,6 +23,7 @@ def __generate_graph_and_name(project_value: str, y_axis_label: str, fname: str=
 	# Usernames that start with underscore break matplotlib, string escape yielded mixed results
 	dat["name"] = dat["name"].map(lambda name: name.lstrip("_") if name.startswith("_") else name)
 	dat["date"] = pd.to_datetime(dat["date"])
+	dat["value"] = dat["value"].fillna()
 
 	# Begin constructing the graph
 	plt.figure()
